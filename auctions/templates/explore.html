@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block title %}Explore Auctions{% endblock %}
+{% block content %}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    .explore-container {
+      background: #f7f9fc; /* Matches body background */
+      padding: 2rem;
+      min-height: calc(100vh - 120px); /* Adjust for nav and footer */
+    }
+
+    .explore-container h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #1e2a44;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .item-card {
+      background: #e2e8f0; /* Soft gray from theme */
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .item-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .item-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #d4a017;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .item-card:hover::before {
+      opacity: 1;
+    }
+
+    .item-card h2 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: #1e2a44;
+      margin-bottom: 0.75rem;
+    }
+
+    .item-card p.description {
+      font-size: 1rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .item-card p.bid-info {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: #1e2a44;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-card p.end-time {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .item-image {
+      width: 100%;
+      height: 12rem;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .item-card:hover .item-image {
+      transform: scale(1.05);
+    }
+
+    .no-image {
+      width: 100%;
+      height: 12rem;
+      background: #d4a0171a; /* Light gold fallback */
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .view-bid-btn {
+      background: #d4a017;
+      color: #ffffff;
+      padding: 0.6rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.4s ease;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .view-bid-btn:hover {
+      background: #b88b14;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .error-message {
+      color: #b91c1c;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      background: #fee2e2;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #b91c1c;
+    }
+
+    .no-items-message {
+      font-size: 1.1rem;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .items-count {
+      font-size: 1rem;
+      color: #1e2a44;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .explore-container h1 {
+        font-size: 2rem;
+      }
+      .item-card h2 {
+        font-size: 1.3rem;
+      }
+      .item-image, .no-image {
+        height: 10rem;
+      }
+      .view-bid-btn {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .explore-container {
+        padding: 1rem;
+      }
+      .item-card {
+        padding: 1rem;
+      }
+      .item-image, .no-image {
+        height: 8rem;
+      }
+    }
+  </style>
+
+  <div class="explore-container">
+    <h1 data-aos="fade-up">Explore Auctions</h1>
+    {% if error %}
+      <p class="error-message" data-aos="fade-up" data-aos-delay="100">{{ error }}</p>
+    {% endif %}
+    <p class="items-count" data-aos="fade-up" data-aos-delay="200">Items count: {{ items.count }}</p>
+    {% if items %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in items %}
+          {% if item.id %}
+            <div class="item-card" data-aos="fade-up" data-aos-delay="{% cycle '100' '200' '300' %}">
+              <h2>{{ item.title }}</h2>
+              <p class="description">{{ item.description|truncatewords:20 }}</p>
+              <p class="bid-info">Starting Bid: ${{ item.starting_bid }}</p>
+              <p class="bid-info">Highest Bid: ${{ item.get_highest_bid }}</p>
+              <p class="end-time">Ends: {{ item.end_time|date:"M d, Y H:i" }}</p>
+              {% if item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+              {% else %}
+                <div class="no-image">No Image</div>
+              {% endif %}
+              <a href="{% url 'item_detail' item.id %}" class="view-bid-btn">View & Bid</a>
+            </div>
+          {% else %}
+            <p class="error-message" data-aos="fade-up">Invalid item: {{ item.title }} (ID: None)</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-items-message" data-aos="fade-up" data-aos-delay="200">No active auctions available.</p>
+    {% endif %}
+  </div>
+{% endblock %}

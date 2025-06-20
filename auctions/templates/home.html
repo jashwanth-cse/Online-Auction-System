@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    .hero {
+      background: linear-gradient(135deg, #1e2a44 0%, #3b4b7e 100%);
+      color: #ffffff;
+      padding: 120px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/diagonal-noise.png');
+      opacity: 0.15;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-weight: 700;
+      font-size: 3.8rem;
+      margin-bottom: 1.2rem;
+      animation: slideInLeft 1s ease-out;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 2.5rem;
+      animation: slideInRight 1s ease-out 0.3s;
+      animation-fill-mode: backwards;
+    }
+
+    .cta-btn {
+      margin: 10px;
+      padding: 14px 35px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.4s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: #d4a017;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #b88b14;
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-outline-light {
+      border: 2px solid #ffffff;
+      color: #ffffff;
+    }
+
+    .btn-outline-light:hover {
+      background: #ffffff;
+      color: #1e2a44;
+      transform: translateY(-4px);
+    }
+
+    .features {
+      padding: 100px 0;
+      background: #f7f9fc; /* Matches body background */
+    }
+
+    .features h2 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 1.2rem;
+      color: #1e2a44;
+    }
+
+    .features p.text-muted {
+      font-size: 1.15rem;
+      color: #6b7280;
+      margin-bottom: 3.5rem;
+    }
+
+    .feature-box {
+      background: #e2e8f0; /* Soft gray for contrast, within theme */
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      padding: 35px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .feature-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #d4a017;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .feature-box:hover::before {
+      opacity: 1;
+    }
+
+    .feature-box h5 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1e2a44;
+    }
+
+    .feature-box p {
+      font-size: 1rem;
+      color: #6b7280;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.2rem;
+      color: #d4a017;
+      transition: transform 0.4s ease;
+    }
+
+    .feature-box:hover .feature-icon {
+      transform: scale(1.2);
+    }
+
+    footer {
+      background: #1e2a44;
+      color: #dfe6e9;
+      padding: 25px 0;
+      font-size: 0.95rem;
+      text-align: center;
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+    }
+
+    /* Animations */
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+      .cta-btn {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+      }
+      .features h2 {
+        font-size: 2.2rem;
+      }
+      .feature-box {
+        padding: 25px;
+      }
+      .feature-icon {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero {
+        padding: 80px 0;
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .features {
+        padding: 60px 0;
+      }
+    }
+  </style>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      {% if user.is_authenticated %}
+        <h1 data-aos="fade-right">Welcome, {{ username }}!</h1>
+      {% else %}
+        <h1 data-aos="fade-right">Welcome to B4Bid.com</h1>
+      {% endif %}
+      <p data-aos="fade-left">Bid. Sell. Win. Your trusted platform for seamless auctions.</p>
+      <div data-aos="fade-up" data-aos-delay="200">
+        <a href="{% url 'explore' %}" class="btn btn-primary btn-lg cta-btn">Explore Auctions</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'list_item' %}" class="btn btn-primary btn-lg cta-btn">List an Item</a>
+        {% else %}
+          <a href="{% url 'register' %}" class="btn btn-primary btn-lg cta-btn">Register</a>
+          <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg cta-btn">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="row text-center mb-5" data-aos="fade-up">
+        <h2>Why Choose B4Bid?</h2>
+        <p class="text-muted">Discover the features that make our platform exceptional</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-box">
+            <div class="feature-icon">📝</div>
+            <h5>Seller Listings</h5>
+            <p>List your items with rich descriptions, high-quality images, and customizable starting bids.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-box">
+            <div class="feature-icon">⚡</div>
+            <h5>Real-Time Bidding</h5>
+            <p>Experience the thrill of live bidding with instant updates and seamless interaction.</p>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-box">
+            <div class="feature-icon">🤖</div>
+            <h5>Auto-Bidding</h5>
+            <p>Set your maximum bid and let our system bid for you, ensuring you stay competitive.</p>
+          </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="feature-box">
+            <div class="feature-icon">🔔</div>
+            <h5>Smart Notifications</h5>
+            <p>Stay informed with instant alerts for outbids and auction endings.</p>
+          </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
+          <div class="feature-box">
+            <div class="feature-icon">✅</div>
+            <h5>Admin Approval</h5>
+            <p>Every listing is verified by our team to maintain trust and quality.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 B4Bid.com. All rights reserved.
+  </footer>
+{% endblock %}

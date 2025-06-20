@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    .admin-panel-container {
+      background: #f7f9fc; /* Matches body background */
+      padding: 2rem;
+      min-height: calc(100vh - 120px); /* Adjust for nav and footer */
+    }
+
+    .admin-panel-container h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #1e2a44;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .admin-panel-container h2 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: #1e2a44;
+      margin-bottom: 1rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 2rem;
+      background: #e2e8f0; /* Soft gray from theme */
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #e2e8f0;
+    }
+
+    .table thead {
+      background: #d4a0171a; /* Light gold for header */
+    }
+
+    .table th {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1e2a44;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 2px solid #d4a017;
+    }
+
+    .table td {
+      font-size: 0.95rem;
+      color: #1e2a44;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #d4a01733;
+    }
+
+    .table tr {
+      transition: all 0.3s ease;
+    }
+
+    .table tr:hover {
+      background: #d4a0171a; /* Light gold hover effect */
+    }
+
+    .action-link {
+      color: #d4a017;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .action-link:hover {
+      color: #b88b14;
+      text-decoration: underline;
+    }
+
+    .no-items-message {
+      font-size: 1rem;
+      color: #6b7280;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .admin-panel-container h1 {
+        font-size: 2rem;
+      }
+      .admin-panel-container h2 {
+        font-size: 1.5rem;
+      }
+      .table th,
+      .table td {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .admin-panel-container {
+        padding: 1rem;
+      }
+      .table-container {
+        padding: 0.5rem;
+      }
+      .table th,
+      .table td {
+        font-size: 0.85rem;
+        padding: 0.4rem;
+      }
+    }
+  </style>
+
+  <div class="admin-panel-container">
+    <h1 data-aos="fade-up">Admin Panel - Auction Overview</h1>
+
+    <h2 data-aos="fade-up" data-aos-delay="100">Ongoing Auctions</h2>
+    {% if ongoing_auctions %}
+      <div class="table-container" data-aos="fade-up" data-aos-delay="200">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Creator</th>
+              <th>Current Bid</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in ongoing_auctions %}
+              <tr data-aos="fade-up" data-aos-delay="{% cycle '100' '150' '200' %}">
+                <td>{{ item.title }}</td>
+                <td>{{ item.created_by.username }}</td>
+                <td>${{ item.get_highest_bid }}</td>
+                <td>{{ item.created_at|date:"F d, Y H:i" }}</td>
+                <td>{{ item.end_time|date:"F d, Y H:i" }}</td>
+                <td>Active</td>
+                <td>
+                  <a href="{% url 'item_detail' item.id %}" class="action-link">View</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="no-items-message" data-aos="fade-up" data-aos-delay="200">No ongoing auctions.</p>
+    {% endif %}
+
+    <h2 data-aos="fade-up" data-aos-delay="300">Past Auctions</h2>
+    {% if past_auctions %}
+      <div class="table-container" data-aos="fade-up" data-aos-delay="400">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Creator</th>
+              <th>Final Bid</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
+              <th>Winner</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in past_auctions %}
+              <tr data-aos="fade-up" data-aos-delay="{% cycle '100' '150' '200' %}">
+                <td>{{ item.title }}</td>
+                <td>{{ item.created_by.username }}</td>
+                <td>${{ item.get_highest_bid }}</td>
+                <td>{{ item.created_at|date:"F d, Y H:i" }}</td>
+                <td>{{ item.end_time|date:"F d, Y H:i" }}</td>
+                <td>Closed</td>
+                <td>
+                  {% if item.winning_bid %}
+                    {{ item.winning_bid.user.username }}
+                  {% else %}
+                    No winner
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="{% url 'auction_result' item.id %}" class="action-link">View Result</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="no-items-message" data-aos="fade-up" data-aos-delay="400">No past auctions.</p>
+    {% endif %}
+  </div>
+{% endblock %}

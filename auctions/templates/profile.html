@@ -1,0 +1,505 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    .profile-container {
+      background: #f7f9fc;
+      padding: 2rem;
+      min-height: calc(100vh - 120px);
+      display: flex;
+      gap: 2rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .sidebar {
+      width: 20%;
+      background: #e2e8f0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      transition: all 0.4s ease;
+    }
+
+    .sidebar:hover {
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .sidebar-item {
+      display: block;
+      padding: 0.75rem 1rem;
+      color: #1e2a44;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-item:hover, .sidebar-item.active {
+      background: #d4a01733;
+      color: #d4a017;
+    }
+
+    .main-content {
+      width: 80%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-header h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #1e2a44;
+    }
+
+    .profile-card {
+      background: linear-gradient(145deg, #e2e8f0, #f7f9fc);
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      padding: 2rem;
+      transition: all 0.4s ease;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .profile-details {
+      flex: 1;
+    }
+
+    .profile-image-container {
+      position: relative;
+      width: 10rem;
+      height: 10rem;
+    }
+
+    .profile-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #d4a017;
+      transition: transform 0.3s ease;
+    }
+
+    .profile-image:hover {
+      transform: scale(1.1);
+    }
+
+    .no-image {
+      width: 100%;
+      height: 100%;
+      background: #d4a0171a;
+      border-radius: 50%;
+      border: 4px solid #d4a017;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .upload-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(212, 160, 23, 0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    .profile-image-container:hover .upload-overlay {
+      opacity: 1;
+    }
+
+    .upload-overlay span {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #1e2a44;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #d4a017;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #1e2a44;
+      background: #ffffff;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #b88b14;
+      box-shadow: 0 0 10px rgba(212, 160, 23, 0.3);
+    }
+
+    .form-group input[type="file"] {
+      padding: 0.5rem;
+      background: #f7f9fc;
+    }
+
+    .save-btn {
+      background: linear-gradient(90deg, #d4a017, #b88b14);
+      color: #ffffff;
+      padding: 0.75rem 2.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border: none;
+      transition: all 0.4s ease;
+      display: block;
+      margin: 1rem 0;
+    }
+
+    .save-btn:hover {
+      background: linear-gradient(90deg, #b88b14, #d4a017);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(212, 160, 23, 0.4);
+    }
+
+    .profile-info {
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-info p {
+      font-size: 1rem;
+      color: #1e2a44;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-info p strong {
+      color: #d4a017;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: #1e2a44;
+      margin-bottom: 1rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #e2e8f0;
+    }
+
+    .table thead {
+      background: linear-gradient(90deg, #d4a0171a, #b88b141a);
+    }
+
+    .table th {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #1e2a44;
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 2px solid #d4a017;
+    }
+
+    .table td {
+      font-size: 0.95rem;
+      color: #1e2a44;
+      padding: 1rem;
+      border-bottom: 1px solid #d4a01733;
+    }
+
+    .table tr {
+      transition: all 0.3s ease;
+    }
+
+    .table tr:hover {
+      background: #d4a0171a;
+      transform: scale(1.01);
+    }
+
+    .action-btn {
+      background: #d4a017;
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .action-btn:hover {
+      background: #b88b14;
+      transform: translateY(-2px);
+    }
+
+    .no-items-message {
+      font-size: 1rem;
+      color: #6b7280;
+      text-align: center;
+      padding: 1.5rem;
+      background: #e2e8f0;
+      border-radius: 12px;
+    }
+
+    .image-preview {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .image-preview img {
+      width: 5rem;
+      height: 5rem;
+      border-radius: 50%;
+      border: 2px solid #d4a017;
+      object-fit: cover;
+    }
+
+    @media (max-width: 1024px) {
+      .profile-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+      }
+      .main-content {
+        width: 100%;
+      }
+      .profile-card {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .profile-header h1 {
+        font-size: 2rem;
+      }
+      .profile-image-container {
+        width: 8rem;
+        height: 8rem;
+      }
+      .section-title {
+        font-size: 1.5rem;
+      }
+      .table th, .table td {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+      }
+      .save-btn {
+        padding: 0.6rem 2rem;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .profile-container {
+        padding: 1rem;
+      }
+      .profile-card, .table-container {
+        padding: 1rem;
+      }
+      .table th, .table td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+      .profile-image-container {
+        width: 6rem;
+        height: 6rem;
+      }
+    }
+  </style>
+
+  <div class="profile-container">
+    <!-- Sidebar -->
+    <div class="sidebar" data-aos="fade-right">
+      <a href="#profile-details" class="sidebar-item active">Profile Details</a>
+      <a href="#auctions-won" class="sidebar-item">Auctions Won</a>
+      <a href="#listed-items" class="sidebar-item">Listed Items</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Profile Details -->
+      <div id="profile-details" class="profile-card" data-aos="fade-up">
+        <div class="profile-header">
+          <h1>My Profile</h1>
+        </div>
+        <div class="profile-image-container">
+          {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="profile-image">
+          {% else %}
+            <div class="no-image">No Image</div>
+          {% endif %}
+          <label for="id_profile_image" class="upload-overlay">
+            <span>Upload</span>
+          </label>
+        </div>
+        <div class="profile-details">
+          <!-- Display Current Profile Details -->
+          <div class="profile-info">
+            <p><strong>Username:</strong> {{ request.user.username }}</p>
+            <p><strong>First Name:</strong> {{ profile.first_name|default:"Not set" }}</p>
+            <p><strong>Last Name:</strong> {{ profile.last_name|default:"Not set" }}</p>
+            <p><strong>Email:</strong> {{ profile.email|default:"Not set" }}</p>
+          </div>
+          <!-- Form for Editing -->
+          <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <p class="text-red-600 text-sm mt-1">{{ field.errors.as_text }}</p>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="save-btn">Save Changes</button>
+          </form>
+          <div class="image-preview" id="image-preview"></div>
+        </div>
+      </div>
+
+      <!-- Auctions Won -->
+      <div id="auctions-won" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="section-title">Auctions Won</h2>
+        {% if auctions_won %}
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Winning Bid</th>
+                  <th>Won On</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for bid in auctions_won %}
+                  <tr data-aos="fade-up" data-aos-delay="{% cycle '100' '150' '200' %}">
+                    <td>{{ bid.item.title }}</td>
+                    <td>${{ bid.amount }}</td>
+                    <td>{{ bid.created_at|date:"F d, Y H:i" }}</td>
+                    <td>
+                      <a href="{% url 'auction_result' bid.item.id %}" class="action-btn">View Result</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="no-items-message">You haven't won any auctions yet.</p>
+        {% endif %}
+      </div>
+
+      <!-- Listed Items -->
+      <div id="listed-items" data-aos="fade-up" data-aos-delay="300">
+        <h2 class="section-title">My Listed Items</h2>
+        {% if listed_items %}
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Current Bid</th>
+                  <th>End Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in listed_items %}
+                  <tr data-aos="fade-up" data-aos-delay="{% cycle '100' '150' '200' %}">
+                    <td>{{ item.title }}</td>
+                    <td>${{ item.get_highest_bid }}</td>
+                    <td>{{ item.end_time|date:"F d, Y H:i" }}</td>
+                    <td>{{ item.is_active|yesno:"Active,Closed" }}</td>
+                    <td>
+                      <a href="{% url 'item_detail' item.id %}" class="action-btn">View</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="no-items-message">You haven't listed any items yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageInput = document.querySelector('input[type="file"]');
+      const imagePreview = document.getElementById('image-preview');
+
+      if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+          imagePreview.innerHTML = '';
+          const file = e.target.files[0];
+          if (file && file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            imagePreview.appendChild(img);
+          }
+        });
+      }
+
+      // Sidebar navigation
+      const sidebarItems = document.querySelectorAll('.sidebar-item');
+      sidebarItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          sidebarItems.forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+          const targetId = this.getAttribute('href').substring(1);
+          document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    });
+  </script>
+{% endblock %}

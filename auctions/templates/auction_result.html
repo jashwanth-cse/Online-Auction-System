@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}Auction Result - {{ item.title }}{% endblock %}
+{% block content %}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    .result-container {
+      background: #f7f9fc; /* Matches body background */
+      padding: 2rem;
+      min-height: calc(100vh - 120px); /* Adjust for nav and footer */
+    }
+
+    .result-container h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #1e2a44;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .result-card {
+      background: #e2e8f0; /* Soft gray from theme */
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.4s ease;
+    }
+
+    .result-card:hover {
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .item-image {
+      width: 100%;
+      max-width: 28rem;
+      height: auto;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .result-card:hover .item-image {
+      transform: scale(1.05);
+    }
+
+    .no-image {
+      width: 100%;
+      max-width: 28rem;
+      height: 12rem;
+      background: #d4a0171a; /* Light gold fallback */
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .item-description {
+      font-size: 1rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .item-info {
+      font-size: 0.95rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .winner-info {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #15803d; /* Green for winner details */
+      margin-bottom: 0.5rem;
+    }
+
+    .no-winner {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .back-link {
+      color: #d4a017;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-block;
+      padding: 0.6rem 1.5rem;
+      border-radius: 30px;
+      background: #d4a0171a;
+    }
+
+    .back-link:hover {
+      color: #b88b14;
+      background: #d4a01733;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .result-container h1 {
+        font-size: 2rem;
+      }
+      .item-image, .no-image {
+        max-width: 100%;
+        height: 10rem;
+      }
+      .back-link {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .result-container {
+        padding: 1rem;
+      }
+      .result-card {
+        padding: 1rem;
+      }
+      .item-image, .no-image {
+        height: 8rem;
+      }
+    }
+  </style>
+
+  <div class="result-container">
+    <h1 data-aos="fade-up">Auction Result: {{ item.title }}</h1>
+    <div class="result-card" data-aos="fade-up" data-aos-delay="100">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+      {% else %}
+        <div class="no-image">No Image</div>
+      {% endif %}
+      <p class="item-description">{{ item.description }}</p>
+      <p class="item-info">Listed by: {{ item.created_by.username }}</p>
+      {% if item.winning_bid %}
+        <p class="winner-info">Winner: {{ item.winning_bid.user.username }}</p>
+        <p class="winner-info">Winning Bid: ${{ item.winning_bid.amount }}</p>
+        <p class="item-info">Won on: {{ item.winning_bid.created_at|date:"F d, Y H:i" }}</p>
+      {% else %}
+        <p class="no-winner">No bids were placed. No winner.</p>
+      {% endif %}
+    </div>
+    <a href="{% url 'explore' %}" class="back-link" data-aos="fade-up" data-aos-delay="200">Back to Explore</a>
+  </div>
+{% endblock %}

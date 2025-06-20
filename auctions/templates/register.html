@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+    .register-container {
+      max-width: 28rem;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #e2e8f0; /* Soft gray from theme */
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      transition: all 0.4s ease;
+    }
+
+    .register-container:hover {
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .register-container h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      color: #1e2a44;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #1e2a44;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #d4a017;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #1e2a44;
+      background: #f7f9fc;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #b88b14;
+      box-shadow: 0 0 8px rgba(212, 160, 23, 0.3);
+    }
+
+    .form-error {
+      color: #b91c1c;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    .register-btn {
+      background: #d4a017;
+      color: #ffffff;
+      padding: 0.75rem 2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border: none;
+      width: 100%;
+      transition: all 0.4s ease;
+    }
+
+    .register-btn:hover {
+      background: #b88b14;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .login-link {
+      color: #d4a017;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .login-link:hover {
+      color: #b88b14;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 576px) {
+      .register-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      .register-container h1 {
+        font-size: 2rem;
+      }
+      .form-group input {
+        padding: 0.5rem;
+        font-size: 0.95rem;
+      }
+      .register-btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+  </style>
+
+  <div class="register-container" data-aos="fade-up">
+    <h1>Register</h1>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <p class="form-error">{{ field.errors.as_text }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="register-btn">Register</button>
+    </form>
+    <p class="mt-4 text-center">
+      Already have an account? <a href="{% url 'login' %}" class="login-link">Login</a>
+    </p>
+  </div>
+{% endblock %}
